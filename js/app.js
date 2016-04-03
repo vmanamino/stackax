@@ -21,6 +21,7 @@ var showQuestion = function(question) {
 
 	// set some properties related to asker
 	var asker = result.find('.asker');
+	// note href is not https
 	asker.html('<p>Name: <a target="_blank" '+
 		'href=http://stackoverflow.com/users/' + question.owner.user_id + ' >' +
 		question.owner.display_name +
@@ -59,7 +60,7 @@ var getUnanswered = function(tags) {
 	};
 	
 	$.ajax({
-		url: "http://api.stackexchange.com/2.2/questions/unanswered",
+		url: "https://api.stackexchange.com/2.2/questions/unanswered",
 		data: request,
 		dataType: "jsonp",//use jsonp to avoid cross origin issues
 		type: "GET",
@@ -83,8 +84,10 @@ var getUnanswered = function(tags) {
 
 
 $(document).ready( function() {
+	console.log("document ready");
 	$('.unanswered-getter').submit( function(e){
 		e.preventDefault();
+		console.log("unanswered getter");
 		// zero out results if previous search has run
 		$('.results').html('');
 		// get the value of the tags the user submitted
