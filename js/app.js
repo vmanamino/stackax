@@ -32,6 +32,10 @@ var showQuestion = function(question) {
 	return result;
 };
 
+function showUser(responseItem){
+	var displayName = responseItem.display_name;
+	console.log(displayName);
+}
 
 // this function takes the results object from StackOverflow
 // and returns the number of results and tags to be appended to DOM
@@ -82,6 +86,28 @@ var getUnanswered = function(tags) {
 	});
 };
 
+function getExpertsOn(tag){
+	console.log("getExpertsOn function "+tag);
+	var about = tag;
+	
+	var params = {
+		site: 'stackoverflow'
+	}
+	
+	$.ajax({
+		url: "https://api.stackexchange.com/2.2/tags/"+tag+"/top-answerers/all_time",
+		data: params,
+		dataType: "jsonp",
+		type: "GET",
+	})
+	.done(function(response){
+		console.log(response);
+		var searchResults = showSearchResults(tag, response.items.length);
+		
+		$('.search-results').html(searchResults);
+		showUser(response.items[0].user);
+	});
+}
 
 $(document).ready( function() {
 	console.log("document ready");
@@ -93,5 +119,13 @@ $(document).ready( function() {
 		// get the value of the tags the user submitted
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
+	});
+	$('.inspiration-getter').submit(function(e){
+		e.preventDefault();
+		console.log("inspiration-getter submitted!");
+		$('.results').html('');
+		var tag = $(this).find("input[name='answerers']").val();
+		console.log(tag);
+		getExpertsOn(tag);
 	});
 });
