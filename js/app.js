@@ -126,6 +126,10 @@ function getExpertsOn(tag){
 			var expert = showExpert(response.items[i]);
 			$(".results").append(expert);
 		}
+	})
+	.fail(function(jqXHR, error){ //this waits for the ajax to return with an error promise object
+		var errorElem = showError(error);
+		$('.search-results').append(errorElem);
 	});
 }
 
