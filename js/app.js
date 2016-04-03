@@ -32,9 +32,26 @@ var showQuestion = function(question) {
 	return result;
 };
 
-function showUser(responseItem){
-	var displayName = responseItem.display_name;
-	console.log(displayName);
+function showExpert(responseItem){
+	var result = $('.templates .expert').clone();
+	
+	var expertName = result.find('.expert-name a');
+	expertName.attr('href', responseItem.user.link);
+	expertName.text(responseItem.user.display_name);
+	
+	var expertReputation = result.find('.expert-reputation');
+	expertReputation.text(responseItem.user.reputation);
+	
+	var expertImage = result.find('.expert-image img');
+	expertImage.attr({
+		'src': responseItem.user.profile_image,
+		'height': "75px",
+		'margin-left': "30px"
+	});
+	
+	var expertScore = result.find('.expert-score');
+	expertScore.text(responseItem.score);
+	return result;
 }
 
 // this function takes the results object from StackOverflow
@@ -105,7 +122,10 @@ function getExpertsOn(tag){
 		var searchResults = showSearchResults(tag, response.items.length);
 		
 		$('.search-results').html(searchResults);
-		showUser(response.items[0].user);
+		for (var i = 0; i < response.items.length; i++){
+			var expert = showExpert(response.items[i]);
+			$(".results").append(expert);
+		}
 	});
 }
 
