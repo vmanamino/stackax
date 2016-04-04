@@ -54,6 +54,23 @@ function showExpert(responseItem){
 	return result;
 }
 
+function nextFive(responseItems, rangeFrom = 0, range = 5){
+	for (var i = rangeFrom; i < range; i++){
+		var expert = showExpert(responseItems[i]);
+		$(".results").append(expert);
+	}
+	rangeFrom += 5;
+	range += 5;
+	if (range <= responseItems.length){
+		var next = $('.templates .show-more').clone();
+		$(".results").append(next);
+		$(".results .show-more > a").click(function(e){
+			e.preventDefault();
+			nextFive(responseItems, rangeFrom, range);
+		})
+	}
+}
+
 // this function takes the results object from StackOverflow
 // and returns the number of results and tags to be appended to DOM
 var showSearchResults = function(query, resultNum) {
@@ -108,6 +125,7 @@ function getExpertsOn(tag){
 	var about = tag;
 	
 	var params = {
+		pagesize: 30,
 		site: 'stackoverflow'
 	}
 	
@@ -120,12 +138,13 @@ function getExpertsOn(tag){
 	.done(function(response){
 		console.log(response);
 		var searchResults = showSearchResults(tag, response.items.length);
-		
+		console.log("number of items "+response.items.length);
 		$('.search-results').html(searchResults);
-		for (var i = 0; i < response.items.length; i++){
-			var expert = showExpert(response.items[i]);
-			$(".results").append(expert);
-		}
+		// for (var i = 0; i < response.items.length; i++){
+		// 	var expert = showExpert(response.items[i]);
+		// 	$(".results").append(expert);
+		// }
+		nextFive(response.items);
 	})
 	.fail(function(jqXHR, error){ //this waits for the ajax to return with an error promise object
 		var errorElem = showError(error);
