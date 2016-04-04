@@ -54,6 +54,8 @@ function showExpert(responseItem){
 	return result;
 }
 
+// for any response containing 5 or more items, just send in the first parameter and use defaults for the next two
+// but for less than 5 items, 
 function nextFive(responseItems, rangeFrom = 0, range = 5){
 	for (var i = rangeFrom; i < range; i++){
 		var expert = showExpert(responseItems[i]);
