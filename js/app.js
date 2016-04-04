@@ -56,7 +56,16 @@ function showExpert(responseItem){
 
 // for any response containing 5 or more items, just send in the first parameter and use defaults for the next two
 // but for less than 5 items, 
-function nextFive(responseItems, rangeFrom = 0, range = 5){
+function nextFive(responseItems, timeAround = 1){
+	var range = null;
+	var rangeFrom = 0;
+	if (responseItems.length >= 5){
+		range = 5 * timeAround;
+		rangeFrom = range - 5;
+	}
+	else {
+		range = responseItems.length;
+	}
 	for (var i = rangeFrom; i < range; i++){
 		var expert = showExpert(responseItems[i]);
 		$(".results").append(expert);
@@ -68,8 +77,8 @@ function nextFive(responseItems, rangeFrom = 0, range = 5){
 		$(".results").append(next);
 		$(".results .show-more > a").click(function(e){
 			e.preventDefault();
-			nextFive(responseItems, rangeFrom, range);
-		})
+			nextFive(responseItems, timeAround += 1);
+		});
 	}
 }
 
