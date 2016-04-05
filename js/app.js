@@ -144,7 +144,7 @@ function prevFive(responseItems, range, rangeFrom, timeAround){
 	}
 }
 
-function addNavigation(responseItems, rangeFrom, range){
+function nav Content(responseItems, rangeFrom, range){
 	
 	var next = $('.templates .show-more a#next').clone();
 	$(".nav").append(next);
