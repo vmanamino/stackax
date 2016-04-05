@@ -57,6 +57,8 @@ function showExpert(responseItem){
 // for any response containing 5 or more items, just send in the first parameter and use defaults for the next two
 // but for less than 5 items, 
 function nextFive(responseItems, timeAround = 1){
+	console.log(timeAround+"time around");
+	$('.results').empty();
 	var range = null;
 	var rangeFrom = 0;
 	if (responseItems.length >= 5){
@@ -73,10 +75,76 @@ function nextFive(responseItems, timeAround = 1){
 	rangeFrom += 5;
 	range += 5;
 	if (range <= responseItems.length){
-		var next = $('.templates .show-more').clone();
+		var next = $('.templates .show-more a#next').clone();
 		$(".results").append(next);
-		$(".results .show-more > a").click(function(e){
+		if (timeAround > 1){
+			var prev = $('.templates .show-more a#prev').clone();
+			$(".results").append(prev);
+			$("a#prev").click(function(e){
+				e.preventDefault();
+				$(".results").empty();
+				prevFive(responseItems, range, rangeFrom, timeAround);
+			});
+			$("a#next").click(function(e){
+				e.preventDefault();
+				$(".results").empty();
+				nextFive(responseItems, timeAround += 1);
+			});
+		}
+		else {
+			console.log("else go to next five");
+			$("a#next").click(function(e){
+				e.preventDefault();
+				$(".results").empty();
+				nextFive(responseItems, timeAround += 1);
+			});
+		}
+	}
+	else if (timeAround > 1) {
+		// add prev link will not show for items less than 5 because timeAround has not been incremented
+		var prev = $('.templates .show-more a#prev').clone();
+		$(".results").append(prev);
+		$("a#prev").click(function(e){
 			e.preventDefault();
+			$(".results").empty();
+			prevFive(responseItems, range, rangeFrom, timeAround);
+		});
+	}
+}
+
+function prevFive(responseItems, range, rangeFrom, timeAround){
+	console.log(range+"range sent");
+	range -= 10;
+	console.log(range+"range decremented")
+	rangeFrom -= 10;
+	timeAround -= 1;
+	for (var i = rangeFrom; i < range; i++){
+		console.log("I!"+i);
+		console.log(responseItems[i].user.display_name);
+		var expert = showExpert(responseItems[i]);
+		$(".results").append(expert);
+	}
+	var next = $('.templates .show-more a#next').clone();
+	$(".results").append(next);
+	if (timeAround > 1){
+		var prev = $('.templates .show-more a#prev').clone();
+		$(".results").append(prev);
+		$("a#prev").click(function(e){
+			e.preventDefault();
+			$(".results").empty();
+			prevFive(responseItems, range, rangeFrom, timeAround);
+		});
+		$("a#next").click(function(e){
+			e.preventDefault();
+			$(".results").empty();
+			nextFive(responseItems, timeAround += 1);
+		});
+	}
+	else {
+		console.log("else go to next five");
+		$("a#next").click(function(e){
+			e.preventDefault();
+			$(".results").empty();
 			nextFive(responseItems, timeAround += 1);
 		});
 	}
