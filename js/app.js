@@ -54,8 +54,6 @@ function showExpert(responseItem){
 	return result;
 }
 
-// for any response containing 5 or more items, just send in the first parameter and use defaults for the next two
-// but for less than 5 items, 
 function nextFive(responseItems, timeAround = 1){
 	$('.results').empty();
 	$('.nav').empty();
@@ -117,8 +115,6 @@ function prevFive(responseItems, range, rangeFrom, timeAround){
 	console.log(range+"range decremented")
 	timeAround -= 1;
 	for (var i = rangeFrom; i < range; i++){
-		console.log("I!"+i);
-		console.log(responseItems[i].user.display_name);
 		var expert = showExpert(responseItems[i]);
 		$(".results").append(expert);
 	}
@@ -145,6 +141,34 @@ function prevFive(responseItems, range, rangeFrom, timeAround){
 			$(".results").empty();
 			nextFive(responseItems, timeAround += 1);
 		});
+	}
+}
+
+function addNavigation(responseItems, rangeFrom, range){
+	
+	var next = $('.templates .show-more a#next').clone();
+	$(".nav").append(next);
+	
+	if (range <= responseItems.length){
+	
+		if (timeAround > 1){
+			addPrev();
+			addNext();
+		}
+		else {
+			console.log("else go to next five");
+			addNext();
+		}
+	}
+	else if (timeAround > 1) {
+		addPrev();
+	}
+}
+
+function addExpert(responseItems, rangeFrom, range){
+	for (var i = rangeFrom; i < range; i++){
+		var expert = showExpert(responseItems[i]);
+		$(".results").append(expert);
 	}
 }
 
