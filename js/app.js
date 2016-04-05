@@ -59,6 +59,7 @@ function showExpert(responseItem){
 function nextFive(responseItems, timeAround = 1){
 	console.log(timeAround+"time around");
 	$('.results').empty();
+	$('.nav').empty();
 	var range = null;
 	var rangeFrom = 0;
 	if (responseItems.length >= 5){
@@ -76,14 +77,14 @@ function nextFive(responseItems, timeAround = 1){
 	range += 5;
 	if (range <= responseItems.length){
 		var next = $('.templates .show-more a#next').clone();
-		$(".results").append(next);
+		$(".nav").append(next);
 		if (timeAround > 1){
 			var prev = $('.templates .show-more a#prev').clone();
-			$(".results").append(prev);
+			$(".nav").prepend(prev);
 			$("a#prev").click(function(e){
 				e.preventDefault();
 				$(".results").empty();
-				prevFive(responseItems, range, rangeFrom, timeAround);
+				prevFive(responseItems, (range - 10), (rangeFrom - 10), timeAround);
 			});
 			$("a#next").click(function(e){
 				e.preventDefault();
@@ -102,21 +103,23 @@ function nextFive(responseItems, timeAround = 1){
 	}
 	else if (timeAround > 1) {
 		// add prev link will not show for items less than 5 because timeAround has not been incremented
+		// 
 		var prev = $('.templates .show-more a#prev').clone();
-		$(".results").append(prev);
+		$(".nav").prepend(prev);
 		$("a#prev").click(function(e){
 			e.preventDefault();
 			$(".results").empty();
-			prevFive(responseItems, range, rangeFrom, timeAround);
+			prevFive(responseItems, (range - 10), (rangeFrom - 10), timeAround);
 		});
 	}
 }
 
 function prevFive(responseItems, range, rangeFrom, timeAround){
+	$(".nav").empty();
 	console.log(range+"range sent");
-	range -= 10;
+	// range -= 10;
 	console.log(range+"range decremented")
-	rangeFrom -= 10;
+	// rangeFrom -= 10;
 	timeAround -= 1;
 	for (var i = rangeFrom; i < range; i++){
 		console.log("I!"+i);
@@ -125,14 +128,14 @@ function prevFive(responseItems, range, rangeFrom, timeAround){
 		$(".results").append(expert);
 	}
 	var next = $('.templates .show-more a#next').clone();
-	$(".results").append(next);
+	$(".nav").append(next);
 	if (timeAround > 1){
 		var prev = $('.templates .show-more a#prev').clone();
-		$(".results").append(prev);
+		$(".nav").prepend(prev);
 		$("a#prev").click(function(e){
 			e.preventDefault();
 			$(".results").empty();
-			prevFive(responseItems, range, rangeFrom, timeAround);
+			prevFive(responseItems, (range - 5), (rangeFrom - 5), timeAround);
 		});
 		$("a#next").click(function(e){
 			e.preventDefault();
