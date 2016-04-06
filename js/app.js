@@ -167,7 +167,7 @@ function navContent(responseItems, rangeFrom = 0, range = 0, timeAround = 1){
 	// add results and nav links anew each time function is called
 	$('.results').empty();
 	$('.nav').empty();
-	console.log(remainder+" remainder");
+	console.log("this is time around"+timeAround);
 	if (responseItems.length >= 5){
 		if (timeAround <= showFive){
 			console.log("set range")
@@ -207,18 +207,24 @@ function navContent(responseItems, rangeFrom = 0, range = 0, timeAround = 1){
 			addNext(responseItems, rangeFrom, range, timeAround);
 		}
 	}
+	//add only next if items more than five and their is a remainder, i.e. the number of items is not divisible by five without a remainder.
+	else if (responseItems.length > 5 && (timeAround <= showFive)){
+		var next = $('.templates .show-more a#next').clone();
+		$(".nav").append(next);
+		var prev = $('.templates .show-more a#prev').clone();
+		$(".nav").prepend(prev);
+		addPrev(responseItems, rangeFrom, range, timeAround);
+		addNext(responseItems, rangeFrom, range, timeAround);
+		
+	}
 	//add only prev only if range has exceeded the length of items, i.e. at last 5 items
-	else if (timeAround > 1) {
+	else if (timeAround > showFive) {
 		console.log("add prev")
 		var prev = $('.templates .show-more a#prev').clone();
 		$(".nav").prepend(prev);
 		addPrev(responseItems, rangeFrom, range, timeAround);
 	}
-	else if (responseItems.length > 5){
-		var next = $('.templates .show-more a#next').clone();
-		$(".nav").append(next);
-		addNext(responseItems, rangeFrom, range, timeAround);
-	}
+	
 	
 	
 }
