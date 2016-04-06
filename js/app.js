@@ -144,7 +144,7 @@ function prevFive(responseItems, range, rangeFrom, timeAround){
 	}
 }
 
-function nav Content(responseItems, rangeFrom, range){
+function navContent(responseItems, rangeFrom = 0, range = 0, timeAround = 1){
 	
 	var next = $('.templates .show-more a#next').clone();
 	$(".nav").append(next);
@@ -163,6 +163,10 @@ function nav Content(responseItems, rangeFrom, range){
 	else if (timeAround > 1) {
 		addPrev();
 	}
+}
+
+function addPrev(){
+	
 }
 
 function addExpert(responseItems, rangeFrom, range){
