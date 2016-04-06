@@ -1,3 +1,22 @@
+
+var showFive = 0;
+var remainder = 0;
+
+function byFive(responseItems){
+	showFive = 0;
+	remainder = 0;
+	console.log(remainder + "remainder IN");
+	if (responseItems.length >= 5) {
+		showFive = responseItems.length / 5;
+		showFive = Math.floor(showFive);
+	}
+	if (responseItems.length % 5) {
+		remainder = responseItems.length % 5;
+	}
+}
+
+
+
 // this function takes the question object returned by the StackOverflow request
 // and returns new result to be appended to DOM
 var showQuestion = function(question) {
@@ -54,127 +73,193 @@ function showExpert(responseItem){
 	return result;
 }
 
-function nextFive(responseItems, timeAround = 1){
+// function nextFive(responseItems, timeAround = 1){
+// 	$('.results').empty();
+// 	$('.nav').empty();
+// 	var range = null;
+// 	var rangeFrom = 0;
+// 	if (responseItems.length >= 5){
+// 		range = 5 * timeAround;
+// 		rangeFrom = range - 5;
+// 	}
+// 	else {
+// 		range = responseItems.length;
+// 	}
+// 	for (var i = rangeFrom; i < range; i++){
+// 		var expert = showExpert(responseItems[i]);
+// 		$(".results").append(expert);
+// 	}
+// 	rangeFrom += 5;
+// 	range += 5;
+// 	if (range <= responseItems.length){
+// 		var next = $('.templates .show-more a#next').clone();
+// 		$(".nav").append(next);
+// 		if (timeAround > 1){
+// 			var prev = $('.templates .show-more a#prev').clone();
+// 			$(".nav").prepend(prev);
+// 			$("a#prev").click(function(e){
+// 				e.preventDefault();
+// 				$(".results").empty();
+// 				prevFive(responseItems, (range - 10), (rangeFrom - 10), timeAround);
+// 			});
+// 			$("a#next").click(function(e){
+// 				e.preventDefault();
+// 				$(".results").empty();
+// 				nextFive(responseItems, timeAround += 1);
+// 			});
+// 		}
+// 		else {
+// 			$("a#next").click(function(e){
+// 				e.preventDefault();
+// 				$(".results").empty();
+// 				nextFive(responseItems, timeAround += 1);
+// 			});
+// 		}
+// 	}
+// 	else if (timeAround > 1) {
+// 		// add prev link will not show for items less than 5 because timeAround has not been incremented
+// 		// 
+// 		var prev = $('.templates .show-more a#prev').clone();
+// 		$(".nav").prepend(prev);
+// 		$("a#prev").click(function(e){
+// 			e.preventDefault();
+// 			$(".results").empty();
+// 			prevFive(responseItems, (range - 10), (rangeFrom - 10), timeAround);
+// 		});
+// 	}
+// }
+
+// function prevFive(responseItems, range, rangeFrom, timeAround){
+// 	$(".nav").empty();
+// 	console.log(range+"range decremented")
+// 	timeAround -= 1;
+// 	for (var i = rangeFrom; i < range; i++){
+// 		var expert = showExpert(responseItems[i]);
+// 		$(".results").append(expert);
+// 	}
+// 	var next = $('.templates .show-more a#next').clone();
+// 	$(".nav").append(next);
+// 	if (timeAround > 1){
+// 		var prev = $('.templates .show-more a#prev').clone();
+// 		$(".nav").prepend(prev);
+// 		$("a#prev").click(function(e){
+// 			e.preventDefault();
+// 			$(".results").empty();
+// 			prevFive(responseItems, (range - 5), (rangeFrom - 5), timeAround);
+// 		});
+// 		$("a#next").click(function(e){
+// 			e.preventDefault();
+// 			$(".results").empty();
+// 			nextFive(responseItems, timeAround += 1);
+// 		});
+// 	}
+// 	else {
+// 		console.log("else go to next five");
+// 		$("a#next").click(function(e){
+// 			e.preventDefault();
+// 			$(".results").empty();
+// 			nextFive(responseItems, timeAround += 1);
+// 		});
+// 	}
+// }
+
+function navContent(responseItems, rangeFrom = 0, range = 0, timeAround = 1){
+	// add results and nav links anew each time function is called
 	$('.results').empty();
 	$('.nav').empty();
-	var range = null;
-	var rangeFrom = 0;
+	console.log(remainder+" remainder");
 	if (responseItems.length >= 5){
-		range = 5 * timeAround;
-		rangeFrom = range - 5;
+		if (timeAround <= showFive){
+			console.log("set range")
+			range = 5 * timeAround;
+			rangeFrom = range - 5;
+			console.log(range);
+			console.log(rangeFrom);
+		}
+		else {
+			range = responseItems.length;
+			rangeFrom = range - remainder;
+		}
 	}
 	else {
 		range = responseItems.length;
 	}
-	for (var i = rangeFrom; i < range; i++){
-		var expert = showExpert(responseItems[i]);
-		$(".results").append(expert);
-	}
+	
+	addExpert(responseItems, rangeFrom, range);
+	// length = range;
 	rangeFrom += 5;
 	range += 5;
+	
+	// add navigation links to other content only if 
 	if (range <= responseItems.length){
+		//add next only if there is more than 5
 		var next = $('.templates .show-more a#next').clone();
 		$(".nav").append(next);
+		//add prev only if timeAround is more than 1
 		if (timeAround > 1){
 			var prev = $('.templates .show-more a#prev').clone();
 			$(".nav").prepend(prev);
-			$("a#prev").click(function(e){
-				e.preventDefault();
-				$(".results").empty();
-				prevFive(responseItems, (range - 10), (rangeFrom - 10), timeAround);
-			});
-			$("a#next").click(function(e){
-				e.preventDefault();
-				$(".results").empty();
-				nextFive(responseItems, timeAround += 1);
-			});
-		}
-		else {
-			$("a#next").click(function(e){
-				e.preventDefault();
-				$(".results").empty();
-				nextFive(responseItems, timeAround += 1);
-			});
-		}
-	}
-	else if (timeAround > 1) {
-		// add prev link will not show for items less than 5 because timeAround has not been incremented
-		// 
-		var prev = $('.templates .show-more a#prev').clone();
-		$(".nav").prepend(prev);
-		$("a#prev").click(function(e){
-			e.preventDefault();
-			$(".results").empty();
-			prevFive(responseItems, (range - 10), (rangeFrom - 10), timeAround);
-		});
-	}
-}
-
-function prevFive(responseItems, range, rangeFrom, timeAround){
-	$(".nav").empty();
-	console.log(range+"range decremented")
-	timeAround -= 1;
-	for (var i = rangeFrom; i < range; i++){
-		var expert = showExpert(responseItems[i]);
-		$(".results").append(expert);
-	}
-	var next = $('.templates .show-more a#next').clone();
-	$(".nav").append(next);
-	if (timeAround > 1){
-		var prev = $('.templates .show-more a#prev').clone();
-		$(".nav").prepend(prev);
-		$("a#prev").click(function(e){
-			e.preventDefault();
-			$(".results").empty();
-			prevFive(responseItems, (range - 5), (rangeFrom - 5), timeAround);
-		});
-		$("a#next").click(function(e){
-			e.preventDefault();
-			$(".results").empty();
-			nextFive(responseItems, timeAround += 1);
-		});
-	}
-	else {
-		console.log("else go to next five");
-		$("a#next").click(function(e){
-			e.preventDefault();
-			$(".results").empty();
-			nextFive(responseItems, timeAround += 1);
-		});
-	}
-}
-
-function navContent(responseItems, rangeFrom = 0, range = 0, timeAround = 1){
-	
-	var next = $('.templates .show-more a#next').clone();
-	$(".nav").append(next);
-	
-	if (range <= responseItems.length){
-	
-		if (timeAround > 1){
-			addPrev();
-			addNext();
+			addPrev(responseItems, rangeFrom, range, timeAround);
+			addNext(responseItems, rangeFrom, range, timeAround);
 		}
 		else {
 			console.log("else go to next five");
-			addNext();
+			addNext(responseItems, rangeFrom, range, timeAround);
 		}
 	}
+	//add only prev only if range has exceeded the length of items, i.e. at last 5 items
 	else if (timeAround > 1) {
-		addPrev();
+		console.log("add prev")
+		var prev = $('.templates .show-more a#prev').clone();
+		$(".nav").prepend(prev);
+		addPrev(responseItems, rangeFrom, range, timeAround);
 	}
-}
-
-function addPrev(){
+	else if (responseItems.length > 5){
+		var next = $('.templates .show-more a#next').clone();
+		$(".nav").append(next);
+		addNext(responseItems, rangeFrom, range, timeAround);
+	}
+	
 	
 }
 
+function addPrev(responseItems, rangeFrom, range, timeAround){
+	rangeFrom -= 5;
+	if (remainder){
+		range = responseItems.length - remainder;
+	}
+	else {
+		range -= 5;
+	}
+	timeAround -= 1;
+	$("a#prev").click(function(e){
+		e.preventDefault();
+		$(".results").empty();
+		navContent(responseItems, range, rangeFrom, timeAround);
+	});
+}
+
+function addNext(responseItems, rangeFrom, range, timeAround){
+	timeAround += 1;
+	$("a#next").click(function(e){
+		e.preventDefault();
+		$(".results").empty();
+		navContent(responseItems, rangeFrom, range, timeAround);
+	});
+}
+
 function addExpert(responseItems, rangeFrom, range){
+	console.log("add content");
+	console.log(responseItems);
+	console.log("rangeFrom "+rangeFrom);
+	console.log("range "+range);
 	for (var i = rangeFrom; i < range; i++){
 		var expert = showExpert(responseItems[i]);
 		$(".results").append(expert);
 	}
 }
+
+
 
 // this function takes the results object from StackOverflow
 // and returns the number of results and tags to be appended to DOM
@@ -225,12 +310,14 @@ var getUnanswered = function(tags) {
 	});
 };
 
+
+
 function getExpertsOn(tag){
 	console.log("getExpertsOn function "+tag);
 	var about = tag;
 	
 	var params = {
-		pagesize: 30,
+		pagesize: 17,
 		site: 'stackoverflow'
 	}
 	
@@ -249,13 +336,16 @@ function getExpertsOn(tag){
 		// 	var expert = showExpert(response.items[i]);
 		// 	$(".results").append(expert);
 		// }
-		nextFive(response.items);
+		byFive(response.items);
+		navContent(response.items);
+		
 	})
 	.fail(function(jqXHR, error){ //this waits for the ajax to return with an error promise object
 		var errorElem = showError(error);
 		$('.search-results').append(errorElem);
 	});
 }
+
 
 $(document).ready( function() {
 	console.log("document ready");
