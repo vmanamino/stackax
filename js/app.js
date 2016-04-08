@@ -74,6 +74,8 @@ function showExpert(responseItem){
 
 //manages all the work for "expert" content on page
 // segment refers strictly to 5 items, segments may be of 5 items only
+// segment is incremented by one when addNext below is called, and it is decremented by one when addPrev below is called
+// initially it is set to one.
 function navContent(responseItems, rangeFrom = 0, range = 0, segment = 1){
 	//empty out children on each call
 	$('.results').empty();
@@ -91,7 +93,7 @@ function navContent(responseItems, rangeFrom = 0, range = 0, segment = 1){
 			rangeFrom = range - 5;
 		}
 		// if segment is larger than the number of times the number of items is divisible by five
-		// then the number of items has a remainder when divided by five, and so the next segment of items cannot be five		// 
+		// then the number of items has a remainder when divided by five, and so there is no segment of five 
 		// and the remaining portion of items will be just the remainder of number of items divided by five--see byFive function above.
 		else {
 			range = responseItems.length;
