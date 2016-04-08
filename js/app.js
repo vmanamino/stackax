@@ -2,6 +2,7 @@
 var showFive = 0;
 var remainder = 0;
 
+//determines number of 'pages'
 function byFive(responseItems){
 	showFive = 0;
 	remainder = 0;
@@ -12,7 +13,6 @@ function byFive(responseItems){
 	if (responseItems.length % 5) {
 		remainder = responseItems.length % 5;
 	}
-	console.log("show five " +showFive);
 }
 
 // this function takes the question object returned by the StackOverflow request
@@ -49,6 +49,7 @@ var showQuestion = function(question) {
 	return result;
 };
 
+//clones elements and adds content, which is then appended to results in addExpert function
 function showExpert(responseItem){
 	var result = $('.templates .expert').clone();
 	
@@ -71,75 +72,92 @@ function showExpert(responseItem){
 	return result;
 }
 
-function navContent(responseItems, rangeFrom = 0, range = 0, timeAround = 1){
-	// add results and nav links anew each time function is called
+//manages all the work for "expert" content on page
+// segment refers strictly to 5 items, segments may be of 5 items only
+function navContent(responseItems, rangeFrom = 0, range = 0, segment = 1){
+	//empty out children on each call
 	$('.results').empty();
 	$('.nav').empty();
-	console.log("this is time around"+timeAround);
+	// if items five or more, need to set range to iterate through to load content for each 'page'
 	if (responseItems.length >= 5){
-		if (timeAround <= showFive){
-			range = 5 * timeAround;
+		// if the segment of items is less than or equal to the number of times all items are divisible by five,
+		// then in that case, set range multiplying 5 by the segment number.
+		// that ensures the next five items will be loaded to the page
+		// example: first time function is called, segment is one, and range is 5 times 1, that is, 5
+		// second time function is called, segment is two, and range is 5 times 2, that is, 10
+		// while rangeFrom is range minus 5, in the latter case, 10.
+		if (segment <= showFive){
+			range = 5 * segment;
 			rangeFrom = range - 5;
 		}
+		// if segment is larger than the number of times the number of items is divisible by five
+		// then firstly, the number of items has a remainder when divided by five, and so the next segment of items cannot be five
+		// but secondly, the segment is the last one in the number of items
+		// and the segment will be just the remainder of number of items divided by five--see byFive function above.
 		else {
 			range = responseItems.length;
 			rangeFrom = range - remainder;
 		}
 	}
+	// if items less than five, length to range through is number of items
 	else {
 		range = responseItems.length;
 	}
-	
+	// add experts ranging through a segment of items.  
 	addExpert(responseItems, rangeFrom, range);
-	// length = range;
+	// add five to these segment boundaries
+	// which creates the next segment of five if it exists 
 	rangeFrom += 5;
 	range += 5;
 	
-	//do this only if there is 5 or more items
+	// this conditional checks if there is another segment of five items to follow the segment just loaded to the page above
 	if (range <= responseItems.length){
+		// if yes, add the following
 		var next = $('.templates .show-more a#next').clone();
 		$(".nav").append(next);
-		//add prev only if timeAround is more than 1
-		if (timeAround > 1){
+		//add prev only if beyond the first segment
+		if (segment > 1){
 			var prev = $('.templates .show-more a#prev').clone();
 			$(".nav").prepend(prev);
-			addPrev(responseItems, rangeFrom, range, timeAround);
-			addNext(responseItems, rangeFrom, range, timeAround);
+			addPrev(responseItems, rangeFrom, range, segment);
+			addNext(responseItems, rangeFrom, range, segment);
 		}
+		// otherwise add only the option to go to the next segment
 		else {
 			console.log("else go to next five");
-			addNext(responseItems, rangeFrom, range, timeAround);
+			addNext(responseItems, rangeFrom, range, segment);
 		}
 	}
-	//add only next if items more than five but the amount of items more than five is less than five (see above conditional)
-	//also 
-	else if (responseItems.length > 5 && (timeAround <= showFive)){
-		if (timeAround == 1){
+	// if after the last or only segment [of five] was loaded to the page, and there is less than five remaining 
+	// ex. when you have 7 or 16 or 17 items, this will condition will be met
+	else if (responseItems.length > 5 && (segment == showFive)){
+		if (segment == 1){
 			var next = $('.templates .show-more a#next').clone();
 			$(".nav").append(next);
-			addNext(responseItems, rangeFrom, range, timeAround);
+			addNext(responseItems, rangeFrom, range, segment);
 		}
 		else {
 			var next = $('.templates .show-more a#next').clone();
 			$(".nav").append(next);
 			var prev = $('.templates .show-more a#prev').clone();
 			$(".nav").prepend(prev);
-			addPrev(responseItems, rangeFrom, range, timeAround);
-			addNext(responseItems, rangeFrom, range, timeAround);
+			addPrev(responseItems, rangeFrom, range, segment);
+			addNext(responseItems, rangeFrom, range, segment);
 		}
 	}
-	//add only prev only if range has exceeded the length of items, i.e. at last 5 items
+	//add only prev only if range has exceeded the length of items, i.e. reached last 5 items
+	// this condition makes sure too that if all items in response are less than five, so that showFive is 0, no navigation appears
 	else if (showFive) {
-		if (timeAround > showFive){
+		if (segment > showFive){
 			console.log("add prev")
 			var prev = $('.templates .show-more a#prev').clone();
 			$(".nav").prepend(prev);
-			addPrev(responseItems, rangeFrom, range, timeAround);
+			addPrev(responseItems, rangeFrom, range, segment);
 		}
 	}
 }
 
-function addPrev(responseItems, rangeFrom, range, timeAround){
+function addPrev(responseItems, rangeFrom, range, segment){
 	rangeFrom -= 5;
 	if (remainder){
 		range = responseItems.length - remainder;
@@ -147,20 +165,20 @@ function addPrev(responseItems, rangeFrom, range, timeAround){
 	else {
 		range -= 5;
 	}
-	timeAround -= 1;
+	segment -= 1;
 	$("a#prev").click(function(e){
 		e.preventDefault();
 		$(".results").empty();
-		navContent(responseItems, range, rangeFrom, timeAround);
+		navContent(responseItems, range, rangeFrom, segment);
 	});
 }
 
-function addNext(responseItems, rangeFrom, range, timeAround){
-	timeAround += 1;
+function addNext(responseItems, rangeFrom, range, segment){
+	segment += 1;
 	$("a#next").click(function(e){
 		e.preventDefault();
 		$(".results").empty();
-		navContent(responseItems, rangeFrom, range, timeAround);
+		navContent(responseItems, rangeFrom, range, segment);
 	});
 }
 
@@ -226,7 +244,7 @@ function getExpertsOn(tag){
 	var about = tag;
 	
 	var params = {
-		pagesize: 16,
+		pagesize: 16, // 16 for demo
 		site: 'stackoverflow'
 	}
 	
