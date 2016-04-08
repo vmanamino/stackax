@@ -91,9 +91,8 @@ function navContent(responseItems, rangeFrom = 0, range = 0, segment = 1){
 			rangeFrom = range - 5;
 		}
 		// if segment is larger than the number of times the number of items is divisible by five
-		// then firstly, the number of items has a remainder when divided by five, and so the next segment of items cannot be five
-		// but secondly, the segment is the last one in the number of items
-		// and the segment will be just the remainder of number of items divided by five--see byFive function above.
+		// then the number of items has a remainder when divided by five, and so the next segment of items cannot be five		// 
+		// and the remaining portion of items will be just the remainder of number of items divided by five--see byFive function above.
 		else {
 			range = responseItems.length;
 			rangeFrom = range - remainder;
@@ -146,7 +145,7 @@ function navContent(responseItems, rangeFrom = 0, range = 0, segment = 1){
 		}
 	}
 	//add only prev only if range has exceeded the length of items, i.e. reached last 5 items
-	// this condition makes sure too that if all items in response are less than five, so that showFive is 0, no navigation appears
+	// this condition makes sure too that if all items in response are less than five, so that if showFive is 0, no navigation appears
 	else if (showFive) {
 		if (segment > showFive){
 			console.log("add prev")
