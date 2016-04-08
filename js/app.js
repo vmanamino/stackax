@@ -87,7 +87,7 @@ function navContent(responseItems, rangeFrom = 0, range = 0, segment = 1){
 		// that ensures the next five items will be loaded to the page
 		// example: first time function is called, segment is one, and range is 5 times 1, that is, 5
 		// second time function is called, segment is two, and range is 5 times 2, that is, 10
-		// while rangeFrom is range minus 5, in the latter case, 10.
+		// while rangeFrom is range minus 5, in the latter case, 10 - 5, which makes rangeFrom 5.
 		if (segment <= showFive){
 			range = 5 * segment;
 			rangeFrom = range - 5;
